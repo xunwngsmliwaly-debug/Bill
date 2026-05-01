@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Bill</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบคีย์หวย</title>
+
+<style>
+body {
+    font-family: -apple-system, sans-serif;
+    background: #f5f5f5;
+    margin: 0;
+}
+.container {
+    max-width: 480px;
+    margin: auto;
+    padding: 12px;
+}
+
+/* การ์ดหลัก */
+.card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+}
+
+/* input */
+input, select, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+
+button { border:none; }
+.add { background:#000; color:#fff; }
+.clear { background:#eee; }
+.submit { background:#007aff; color:#fff; }
+
+/* 📦 การ์ดบิล */
+.bill {
+    background: #fff;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px; /* 🧲 spacing เท่ากัน */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+}
+
+/* รายการในบิล */
+.item {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 0;
+    border-bottom:1px solid #f0f0f0;
+    font-size:14px;
+}
+.item:last-child {
+    border-bottom:none;
+}
+
+/* ปุ่มลบรายการ */
+.del-btn {
+    background:#ff3b30;
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    padding:4px 8px;
+    font-size:12px;
+}
+
+/* footer บิล */
+.bill-footer {
+    display:flex;
+    justify-content:flex-end;
+    margin-top:10px;
+    padding-top:8px;
+    border-top:1px dashed #eee;
+}
+
+/* ปุ่มลบบิล */
+.del-bill-btn {
+    background:#fff;
+    color:#ff3b30;
+    border:1px solid #ff3b30;
+    border-radius:8px;
+    padding:6px 10px;
+    font-size:13px;
+}
+
+/* รวม */
+.total {
+    font-weight:bold;
+    text-align:right;
+    margin-top:10px;
+}
+
+.small {
+    font-size:13px;
+    color:#666;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+<h3>📱 ระบบคีย์หวย</h3>
+
+<label>เรทบาทละ (แสดง)</label>
+<select id="rate">
+<option>60</option>
+<option>68</option>
+<option>70</option>
+<option>78</option>
+<option>90</option>
+</select>
+
+<label>ประเภท</label>
+<select id="type">
+<option>3 ตัวบน</option>
+<option>3 ตัวโต๊ด</option>
+<option>2 ตัวบน</option>
+<option>2 ตัวล่าง</option>
+<option>กลับเลข</option>
+</select>
+
+<label>เลข</label>
+<input id="numbers" placeholder="เช่น 12 123 456">
+
+<label>ราคา/เลข</label>
+<input id="price" type="number" placeholder="ไม่ใส่ = 1">
+
+<button class="add" onclick="addItem()">+ เพิ่มรายการ (สร้างบิล)</button>
+<button class="clear" onclick="clearAll()">ล้างทั้งหมด</button>
+</div>
+
+<div class="card">
+<div id="list"></div>
+
+<div class="total">รวมทั้งหมด: <span id="total">0</span> บาท</div>
+<div class="small" id="summaryType"></div>
+
+<button class="submit" onclick="copyBill()">📋 คัดลอกโพย</button>
+</div>
+
+<div class="card">
+<pre id="output"></pre>
+</div>
+
+</div>
+
+<script>
+
+let bills = [];
+let total = 0;
+
+/* auto แยกประเภท */
+function autoType(num){
+    if(num.length == 2) return "2 ตัวบน";
+    if(num.length == 3) return "3 ตัวบน";
+    return document.getElementById("type").value;
+}
+
+/* เพิ่มบิล */
+function addItem(){
+    let rate = document.getElementById("rate").value;
+    let nums = document.getElementById("numbers").value.trim().split(/\s+/);
+    let price = parseInt(document.getElementById("price").value) || 1;
+
+    let bill = [];
+
+    nums.forEach(n=>{
+        if(n){
+            let type = autoType(n);
+            let cost = price;
+
+            bill.push({n,type,price,rate,cost});
+            total += cost;
+        }
+    });
+
+    if(bill.length>0) bills.push(bill);
+
+    document.getElementById("numbers").value="";
+    document.getElementById("price").value="";
+
+    render();
+}
+
+/* render */
+function render(){
+    let html = "";
+    let typeSum = {};
+
+    bills.forEach((bill,bIndex)=>{
+        html += `<div class="bill">`;
+
+        bill.forEach((i,index)=>{
+            html += `
+            <div class="item">
+                <span>${i.n} • ${i.type} • ${i.price}฿</span>
+                <button class="del-btn" onclick="deleteItem(${bIndex},${index})">x</button>
+            </div>
+            `;
+
+            typeSum[i.type] = (typeSum[i.type]||0) + i.cost;
+        });
+
+        html += `
+        <div class="bill-footer">
+            <button class="del-bill-btn" onclick="deleteBill(${bIndex})">
+                ลบบิลนี้
+            </button>
+        </div>
+        `;
+
+        html += `</div>`;
+    });
+
+    document.getElementById("list").innerHTML = html;
+    document.getElementById("total").innerText = total;
+
+    let typeText="";
+    for(let t in typeSum){
+        typeText += `${t}: ${typeSum[t]}฿ | `;
+    }
+    document.getElementById("summaryType").innerText = typeText;
+}
+
+/* ลบรายการ */
+function deleteItem(bIndex,index){
+    total -= bills[bIndex][index].cost;
+    bills[bIndex].splice(index,1);
+
+    if(bills[bIndex].length==0){
+        bills.splice(bIndex,1);
+    }
+
+    render();
+}
+
+/* ลบบิล */
+function deleteBill(bIndex){
+    bills[bIndex].forEach(i=>{
+        total -= i.cost;
+    });
+    bills.splice(bIndex,1);
+    render();
+}
+
+/* ล้างทั้งหมด */
+function clearAll(){
+    bills=[];
+    total=0;
+    render();
+    document.getElementById("output").innerText="";
+}
+
+/* สร้างข้อความ */
+function generateText(){
+    let text="📄 ระบบคีย์บิล โพยของคุณ\n\n";
+
+    bills.forEach(bill=>{
+        bill.forEach(i=>{
+            text += `${i.n} | ${i.type} | ${i.price}฿\n`;
+        });
+        text+="\n";
+    });
+
+    text+=`รวมทั้งหมด: ${total} บาท`;
+    return text;
+}
+
+/* คัดลอก */
+function copyBill(){
+    let text = generateText();
+    navigator.clipboard.writeText(text);
+    document.getElementById("output").innerText = text;
+}
+
+</script>
+
+</body>
+</html>
+    
+  </body>
+  
+</html>
