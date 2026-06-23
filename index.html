@@ -1,306 +1,252 @@
 <!DOCTYPE html>
-<html lang="en">
-
-  <head>
-    <meta charset="UTF-8">
-    <title>Bill</title>
-    
-
-  </head>
-    
-  <body>
-  <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ระบบคีย์หวย</title>
-
-<style>
-body {
-    font-family: -apple-system, sans-serif;
-    background: #f5f5f5;
-    margin: 0;
-}
-.container {
-    max-width: 480px;
-    margin: auto;
-    padding: 12px;
-}
-
-/* การ์ดหลัก */
-.card {
-    background: #fff;
-    border-radius: 14px;
-    padding: 14px;
-    margin-bottom: 12px;
-}
-
-/* input */
-input, select, button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 8px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-}
-
-button { border:none; }
-.add { background:#000; color:#fff; }
-.clear { background:#eee; }
-.submit { background:#007aff; color:#fff; }
-
-/* 📦 การ์ดบิล */
-.bill {
-    background: #fff;
-    border-radius: 12px;
-    padding: 12px;
-    margin-bottom: 12px; /* 🧲 spacing เท่ากัน */
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    border: 1px solid #eee;
-}
-
-/* รายการในบิล */
-.item {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:10px 0;
-    border-bottom:1px solid #f0f0f0;
-    font-size:14px;
-}
-.item:last-child {
-    border-bottom:none;
-}
-
-/* ปุ่มลบรายการ */
-.del-btn {
-    background:#ff3b30;
-    color:#fff;
-    border:none;
-    border-radius:6px;
-    padding:4px 8px;
-    font-size:12px;
-}
-
-/* footer บิล */
-.bill-footer {
-    display:flex;
-    justify-content:flex-end;
-    margin-top:10px;
-    padding-top:8px;
-    border-top:1px dashed #eee;
-}
-
-/* ปุ่มลบบิล */
-.del-bill-btn {
-    background:#fff;
-    color:#ff3b30;
-    border:1px solid #ff3b30;
-    border-radius:8px;
-    padding:6px 10px;
-    font-size:13px;
-}
-
-/* รวม */
-.total {
-    font-weight:bold;
-    text-align:right;
-    margin-top:10px;
-}
-
-.small {
-    font-size:13px;
-    color:#666;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>สัตว์ตัวนี้ชอบกินอะไร?</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Prompt", "Noto Sans Thai", system-ui, sans-serif;
+      background: linear-gradient(135deg, #fff7ed, #fef3c7, #ecfeff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: #3f3f46;
+    }
+    .game {
+      width: min(460px, 100%);
+      background: rgba(255,255,255,0.86);
+      border: 2px solid rgba(255,255,255,0.8);
+      border-radius: 30px;
+      padding: 26px;
+      box-shadow: 0 18px 45px rgba(120, 113, 108, 0.18);
+      text-align: center;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.75rem;
+      color: #fb7185;
+    }
+    .subtitle {
+      margin: 0 0 18px;
+      color: #78716c;
+      font-size: 0.98rem;
+    }
+    .progress {
+      height: 11px;
+      background: #f5f5f4;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 14px 0 22px;
+    }
+    .bar {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #fda4af, #facc15);
+      transition: width 0.3s ease;
+    }
+    .animal-card {
+      background: #fffaf0;
+      border-radius: 26px;
+      padding: 20px 12px;
+      margin-bottom: 18px;
+      border: 2px dashed #fed7aa;
+    }
+    .animal {
+      font-size: 6rem;
+      line-height: 1;
+      filter: drop-shadow(0 8px 10px rgba(0,0,0,0.08));
+    }
+    .question {
+      margin-top: 12px;
+      font-size: 1.18rem;
+      font-weight: 700;
+    }
+    .choices {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    button {
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .choice {
+      background: #ffffff;
+      border-radius: 22px;
+      padding: 16px 8px;
+      font-size: 2.3rem;
+      box-shadow: 0 8px 18px rgba(120, 113, 108, 0.12);
+      border: 2px solid #fff7ed;
+    }
+    .choice span {
+      display: block;
+      font-size: 0.9rem;
+      margin-top: 5px;
+      color: #57534e;
+    }
+    .choice:hover { transform: translateY(-3px); }
+    .choice.correct { background: #dcfce7; border-color: #86efac; }
+    .choice.wrong { background: #ffe4e6; border-color: #fda4af; }
+    .message {
+      min-height: 34px;
+      margin: 16px 0 10px;
+      font-weight: 700;
+      color: #fb7185;
+    }
+    .score {
+      color: #78716c;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .next, .restart {
+      background: #fb7185;
+      color: white;
+      border-radius: 999px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      box-shadow: 0 10px 20px rgba(251, 113, 133, 0.25);
+    }
+    .next:hover, .restart:hover { transform: translateY(-2px); }
+    .hidden { display: none; }
+    .final-emoji { font-size: 5rem; margin: 14px 0; }
+    @media (max-width: 390px) {
+      .game { padding: 20px; }
+      h1 { font-size: 1.45rem; }
+      .animal { font-size: 5rem; }
+      .choice { font-size: 2rem; }
+    }
+  </style>
 </head>
-
 <body>
+  <main class="game">
+    <h1>สัตว์ตัวนี้ชอบกินอะไร?</h1>
+    <p class="subtitle">ดูรูปสัตว์ แล้วเลือกอาหารที่เหมาะกับมัน 🐾</p>
 
-<div class="container">
+    <section id="quizBox">
+      <div class="score" id="scoreText">คะแนน 0</div>
+      <div class="progress"><div class="bar" id="bar"></div></div>
+      <div class="animal-card">
+        <div class="animal" id="animalEmoji">🐰</div>
+        <div class="question" id="questionText">กระต่ายชอบกินอะไร?</div>
+      </div>
+      <div class="choices" id="choices"></div>
+      <div class="message" id="message"></div>
+      <button class="next hidden" id="nextBtn">ข้อต่อไป ✨</button>
+    </section>
 
-<div class="card">
-<h3>📱 ระบบคีย์หวย</h3>
+    <section id="resultBox" class="hidden">
+      <div class="final-emoji">🎉</div>
+      <h2 id="finalText">เก่งมาก!</h2>
+      <p id="finalScore"></p>
+      <button class="restart" id="restartBtn">เล่นอีกครั้ง</button>
+    </section>
+  </main>
 
-<label>เรทบาทละ (แสดง)</label>
-<select id="rate">
-<option>60</option>
-<option>68</option>
-<option>70</option>
-<option>78</option>
-<option>90</option>
-</select>
+  <script>
+    const questions = [
+      { animal: "🐰", name: "กระต่าย", answer: "🥕", choices: ["🥕", "🍖", "🐟", "🍯"], labels: ["แครอท", "เนื้อ", "ปลา", "น้ำผึ้ง"] },
+      { animal: "🐼", name: "แพนด้า", answer: "🎋", choices: ["🎋", "🍕", "🍤", "🍪"], labels: ["ไผ่", "พิซซ่า", "กุ้ง", "คุกกี้"] },
+      { animal: "🐵", name: "ลิง", answer: "🍌", choices: ["🍌", "🥩", "🧀", "🌶️"], labels: ["กล้วย", "เนื้อสัตว์", "ชีส", "พริก"] },
+      { animal: "🐱", name: "แมว", answer: "🐟", choices: ["🐟", "🥕", "🍞", "🍇"], labels: ["ปลา", "แครอท", "ขนมปัง", "องุ่น"] },
+      { animal: "🐶", name: "สุนัข", answer: "🦴", choices: ["🦴", "🍫", "🍋", "🥬"], labels: ["กระดูก", "ช็อกโกแลต", "มะนาว", "ผัก"] },
+      { animal: "🐮", name: "วัว", answer: "🌿", choices: ["🌿", "🍩", "🍗", "🍭"], labels: ["ใบไม้", "โดนัท", "ไก่", "ลูกอม"] },
+      { animal: "🐘", name: "ช้าง", answer: "🍃", choices: ["🍃", "🧁", "🍔", "🐟"], labels: ["ใบไม้", "คัพเค้ก", "เบอร์เกอร์", "ปลา"] },
+      { animal: "🐝", name: "ผึ้ง", answer: "🌸", choices: ["🌸", "🍟", "🥓", "🧀"], labels: ["เกสรดอกไม้", "เฟรนช์ฟรายส์", "เบคอน", "ชีส"] },
+      { animal: "🐹", name: "แฮมสเตอร์", answer: "🌻", choices: ["🌻", "🍣", "🍦", "🌶️"], labels: ["เมล็ดทานตะวัน", "ซูชิ", "ไอศกรีม", "พริก"] },
+      { animal: "🦒", name: "ยีราฟ", answer: "🌳", choices: ["🌳", "🍰", "🥨", "🍤"], labels: ["ใบไม้บนต้นไม้", "เค้ก", "เพรตเซล", "กุ้ง"] }
+    ];
 
-<label>ประเภท</label>
-<select id="type">
-<option>3 ตัวบน</option>
-<option>3 ตัวโต๊ด</option>
-<option>2 ตัวบน</option>
-<option>2 ตัวล่าง</option>
-<option>กลับเลข</option>
-</select>
+    let index = 0;
+    let score = 0;
+    let answered = false;
 
-<label>เลข</label>
-<input id="numbers" placeholder="เช่น 12 123 456">
+    const animalEmoji = document.getElementById("animalEmoji");
+    const questionText = document.getElementById("questionText");
+    const choicesBox = document.getElementById("choices");
+    const message = document.getElementById("message");
+    const nextBtn = document.getElementById("nextBtn");
+    const scoreText = document.getElementById("scoreText");
+    const bar = document.getElementById("bar");
+    const quizBox = document.getElementById("quizBox");
+    const resultBox = document.getElementById("resultBox");
+    const finalText = document.getElementById("finalText");
+    const finalScore = document.getElementById("finalScore");
+    const restartBtn = document.getElementById("restartBtn");
 
-<label>ราคา/เลข</label>
-<input id="price" type="number" placeholder="ไม่ใส่ = 1">
+    function loadQuestion() {
+      answered = false;
+      const q = questions[index];
+      animalEmoji.textContent = q.animal;
+      questionText.textContent = `${q.name}ชอบกินอะไร?`;
+      choicesBox.innerHTML = "";
+      message.textContent = "";
+      nextBtn.classList.add("hidden");
+      scoreText.textContent = `คะแนน ${score}`;
+      bar.style.width = `${(index / questions.length) * 100}%`;
 
-<button class="add" onclick="addItem()">+ เพิ่มรายการ (สร้างบิล)</button>
-<button class="clear" onclick="clearAll()">ล้างทั้งหมด</button>
-</div>
-
-<div class="card">
-<div id="list"></div>
-
-<div class="total">รวมทั้งหมด: <span id="total">0</span> บาท</div>
-<div class="small" id="summaryType"></div>
-
-<button class="submit" onclick="copyBill()">📋 คัดลอกโพย</button>
-</div>
-
-<div class="card">
-<pre id="output"></pre>
-</div>
-
-</div>
-
-<script>
-
-let bills = [];
-let total = 0;
-
-/* auto แยกประเภท */
-function autoType(num){
-    if(num.length == 2) return "2 ตัวบน";
-    if(num.length == 3) return "3 ตัวบน";
-    return document.getElementById("type").value;
-}
-
-/* เพิ่มบิล */
-function addItem(){
-    let rate = document.getElementById("rate").value;
-    let nums = document.getElementById("numbers").value.trim().split(/\s+/);
-    let price = parseInt(document.getElementById("price").value) || 1;
-
-    let bill = [];
-
-    nums.forEach(n=>{
-        if(n){
-            let type = autoType(n);
-            let cost = price;
-
-            bill.push({n,type,price,rate,cost});
-            total += cost;
-        }
-    });
-
-    if(bill.length>0) bills.push(bill);
-
-    document.getElementById("numbers").value="";
-    document.getElementById("price").value="";
-
-    render();
-}
-
-/* render */
-function render(){
-    let html = "";
-    let typeSum = {};
-
-    bills.forEach((bill,bIndex)=>{
-        html += `<div class="bill">`;
-
-        bill.forEach((i,index)=>{
-            html += `
-            <div class="item">
-                <span>${i.n} • ${i.type} • ${i.price}฿</span>
-                <button class="del-btn" onclick="deleteItem(${bIndex},${index})">x</button>
-            </div>
-            `;
-
-            typeSum[i.type] = (typeSum[i.type]||0) + i.cost;
-        });
-
-        html += `
-        <div class="bill-footer">
-            <button class="del-bill-btn" onclick="deleteBill(${bIndex})">
-                ลบบิลนี้
-            </button>
-        </div>
-        `;
-
-        html += `</div>`;
-    });
-
-    document.getElementById("list").innerHTML = html;
-    document.getElementById("total").innerText = total;
-
-    let typeText="";
-    for(let t in typeSum){
-        typeText += `${t}: ${typeSum[t]}฿ | `;
-    }
-    document.getElementById("summaryType").innerText = typeText;
-}
-
-/* ลบรายการ */
-function deleteItem(bIndex,index){
-    total -= bills[bIndex][index].cost;
-    bills[bIndex].splice(index,1);
-
-    if(bills[bIndex].length==0){
-        bills.splice(bIndex,1);
+      q.choices.forEach((choice, i) => {
+        const btn = document.createElement("button");
+        btn.className = "choice";
+        btn.innerHTML = `${choice}<span>${q.labels[i]}</span>`;
+        btn.onclick = () => checkAnswer(btn, choice);
+        choicesBox.appendChild(btn);
+      });
     }
 
-    render();
-}
+    function checkAnswer(btn, choice) {
+      if (answered) return;
+      answered = true;
+      const q = questions[index];
+      const allBtns = document.querySelectorAll(".choice");
 
-/* ลบบิล */
-function deleteBill(bIndex){
-    bills[bIndex].forEach(i=>{
-        total -= i.cost;
-    });
-    bills.splice(bIndex,1);
-    render();
-}
+      allBtns.forEach(b => {
+        if (b.textContent.includes(q.answer)) b.classList.add("correct");
+        b.disabled = true;
+      });
 
-/* ล้างทั้งหมด */
-function clearAll(){
-    bills=[];
-    total=0;
-    render();
-    document.getElementById("output").innerText="";
-}
+      if (choice === q.answer) {
+        score++;
+        btn.classList.add("correct");
+        message.textContent = "ถูกต้อง! น่ารักมาก 🌟";
+      } else {
+        btn.classList.add("wrong");
+        message.textContent = `ยังไม่ใช่นะ คำตอบคือ ${q.answer}`;
+      }
+      scoreText.textContent = `คะแนน ${score}`;
+      nextBtn.classList.remove("hidden");
+    }
 
-/* สร้างข้อความ */
-function generateText(){
-    let text="📄 ระบบคีย์บิล โพยของคุณ\n\n";
+    function showResult() {
+      quizBox.classList.add("hidden");
+      resultBox.classList.remove("hidden");
+      bar.style.width = "100%";
+      finalText.textContent = score >= 8 ? "สุดยอดเลย!" : score >= 5 ? "ทำได้ดีมาก!" : "ลองใหม่อีกครั้งนะ!";
+      finalScore.textContent = `ได้คะแนน ${score} / ${questions.length}`;
+    }
 
-    bills.forEach(bill=>{
-        bill.forEach(i=>{
-            text += `${i.n} | ${i.type} | ${i.price}฿\n`;
-        });
-        text+="\n";
-    });
+    nextBtn.onclick = () => {
+      index++;
+      if (index < questions.length) loadQuestion();
+      else showResult();
+    };
 
-    text+=`รวมทั้งหมด: ${total} บาท`;
-    return text;
-}
+    restartBtn.onclick = () => {
+      index = 0;
+      score = 0;
+      quizBox.classList.remove("hidden");
+      resultBox.classList.add("hidden");
+      loadQuestion();
+    };
 
-/* คัดลอก */
-function copyBill(){
-    let text = generateText();
-    navigator.clipboard.writeText(text);
-    document.getElementById("output").innerText = text;
-}
-
-</script>
-
+    loadQuestion();
+  </script>
 </body>
-</html>
-    
-  </body>
-  
 </html>
